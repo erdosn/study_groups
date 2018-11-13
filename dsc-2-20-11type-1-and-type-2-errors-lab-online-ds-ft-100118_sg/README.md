@@ -12,9 +12,26 @@ In this lab, you'll run some of your own simulations to learn more about type 1 
 You will be able to:
 
 * Explain why alpha = 0.05 is chosen as the cut off point for rejecting Null hypothesis in most scientific experiments
+    * It's a convention and is a good tradeoff between type I and type II error.
+
 * Simulate Type I and Type II errors with alpha control to observe the output of an experiment
 * Describe and differentiate between TYPE I and TYPE II errors
-* Understand alpha and beta for representing false positive and false negative values
+    * Determine how type I and type II errors are effected by alpha
+    * Type I is where we see a difference but there is not one, reject but we shouldn't reject null hypothesis (false positive)
+    * Type II is where we should reject the null, but we fail to do so.  In other words we're accepting the null hypothesis, but it's actually false.
+* Describe alpha and beta for representing false positive and false negative values
+    * alpha increases
+        * type I will increase because the space outside of the 'good region' is increasing
+        * type II will decrease because the 'good region' is decreasing
+    * Converse is true if alpha decreases
+
+
+# What we learned
+* How to evaluate whether random samples are representative of a total population - chris
+* Tradeoff between type I and type II errors, dictated by alpha - Danyal
+* Sampling distributions are distributions of means, for example, of a population. - Chris
+* Learned to divide alpha by 2 to get the tails. - Masood
+* How to put a sample distribution on a sampling distribution plot/graph.
 
 ## Alpha and Beta
 
@@ -59,7 +76,7 @@ sns.distplot(pop)
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1085d2e48>
+    <matplotlib.axes._subplots.AxesSubplot at 0x1a10083dd8>
 
 
 
@@ -84,7 +101,7 @@ stats.describe(sample1)
 
 
 
-    DescribeResult(nobs=100, minmax=(42.894352216842066, 147.28560302587476), mean=96.61297543591365, variance=405.5116712908975, skewness=0.23988419345642897, kurtosis=-0.26276760640849295)
+    DescribeResult(nobs=100, minmax=(37.937428169323496, 144.9108713600725), mean=101.17878327192903, variance=390.0737390627844, skewness=-0.5052834136523039, kurtosis=0.47573896699174334)
 
 
 
@@ -101,7 +118,7 @@ stats.describe(sample2)
 
 
 
-    DescribeResult(nobs=100, minmax=(49.83527162898597, 154.07785139854766), mean=96.47071308388206, variance=433.7562450962168, skewness=0.17264373338860386, kurtosis=-0.2241136639981094)
+    DescribeResult(nobs=100, minmax=(51.29585873925131, 171.15353116938894), mean=97.26149261303051, variance=443.83261928981943, skewness=0.34305326468690917, kurtosis=0.5882283788214968)
 
 
 
@@ -120,7 +137,7 @@ stats.ttest_ind(sample1, sample2)
 
 
 
-    Ttest_indResult(statistic=0.04910657831019071, pvalue=0.9608838604654049)
+    Ttest_indResult(statistic=1.3565229770313056, pvalue=0.1764775314643652)
 
 
 
@@ -146,8 +163,11 @@ plt.show()
 
 ## Simulating Type I and II errors
 
-### Type I error
-TYPE I error describes a situation where you reject the null hypothesis when it is actually true. This type of error is also known as a "false positive" or "false hit". The type 1 error rate is equal to the significance level α, so setting a higher confidence level (and therefore lower alpha) reduces the chances of getting a false positive.
+### Type I error - Rejecting when you shouldn't
+TYPE I error describes a situation where you reject the null hypothesis when it is actually true. This type of error is also known as a "false positive" or "false hit". The type 1 error rate is equal to the significance level α, **so setting a higher confidence level (and therefore lower alpha) reduces the chances of getting a false positive.**
+
+
+### alpha = tolerance - how many sample metrics we will tolerate to be outside of the hypothesized distribution metric.
 
 
 
@@ -174,6 +194,9 @@ import pandas as pd
 
 numTests = 100
 alphaSet = [0.001, 0.01, 0.05, 0.1, 0.2, 0.5]
+
+# 0.001 alpha means
+# 
 columns = ['err', 'p_val', 'alpha']
 sigTests = pd.DataFrame(columns=columns)
 
@@ -245,31 +268,31 @@ sigTests.head()
     <tr>
       <th>1</th>
       <td>0.0</td>
-      <td>0.455428</td>
+      <td>0.467576</td>
       <td>0.001</td>
     </tr>
     <tr>
       <th>2</th>
       <td>0.0</td>
-      <td>0.730703</td>
+      <td>0.121453</td>
       <td>0.010</td>
     </tr>
     <tr>
       <th>3</th>
       <td>0.0</td>
-      <td>0.431905</td>
+      <td>0.167776</td>
       <td>0.050</td>
     </tr>
     <tr>
       <th>4</th>
       <td>0.0</td>
-      <td>0.202983</td>
+      <td>0.585402</td>
       <td>0.100</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>1.0</td>
-      <td>0.179599</td>
+      <td>0.0</td>
+      <td>0.432011</td>
       <td>0.200</td>
     </tr>
   </tbody>
@@ -290,7 +313,7 @@ group_error.plot.bar(title = "TYPE I ERROR - FALSE POSITIVES")
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1a14872748>
+    <matplotlib.axes._subplots.AxesSubplot at 0x1a1b9a5cc0>
 
 
 
@@ -300,7 +323,7 @@ group_error.plot.bar(title = "TYPE I ERROR - FALSE POSITIVES")
 
 Grouped data clearly shows that as value of alpha is increases from .001 to 0.5, the probability of TYPE I errors also increase.  
 
-### Type II error 
+### Type II error - Failing to Reject when you should - 'accepting when you shouldn't accept'
 
 This error describes a situation where you fail to reject the null hypothesis when it is actually false. Type II error is also known as a "false negative" or "miss". The higher your confidence level, the more likely you are to make a type II error.
 
@@ -352,7 +375,7 @@ group_error2.plot.bar(title = "Type II ERROR - FALSE NEGATIVES")
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1a148dc358>
+    <matplotlib.axes._subplots.AxesSubplot at 0x1a1bb598d0>
 
 
 
